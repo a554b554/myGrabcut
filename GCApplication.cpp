@@ -60,6 +60,70 @@ void GCApplication::showImage() const
 	imshow( *winName, res );
 }
 
+void GCApplication::saveImage(const string name){
+    if (image->empty()) {
+        return;
+    }
+    Mat res;
+    Mat binMask;
+    if( !isInitialized )
+        image->copyTo( res );
+    else
+    {
+        getBinMask( mask, binMask );
+        image->copyTo( res, binMask );  //show the GrabCuted image
+        borderMatting(binMask, res);
+        /*Mat rgb[3];
+        split(res, rgb);
+        Mat alpha(binMask.size(),CV_8UC1,Scalar(0));
+        for (int i = 0; i < binMask.rows; i++) {
+            for (int j = 0; j < binMask.cols; j++) {
+                if (binMask.at<uchar>(i,j)==0) {
+                    alpha.at<uchar>(i,j)=0;
+                }
+                else{
+                    alpha.at<uchar>(i,j)=255;
+                }
+            }
+        }
+        Mat rgba[4]={rgb[0],rgb[1],rgb[2],alpha};
+        merge(rgba, 4, res);*/
+    }
+        cout<<"image saved"<<endl;
+    imwrite(name, res);
+}
+
+void GCApplication::borderMatting(const cv::Mat &binMask, cv::Mat &rgba){
+    Mat res,tmp;
+    image->copyTo(res,binMask);
+    cvtColor(res, tmp, CV_BGR2GRAY);
+    vector< vector <Point> > contours; // Vector for storing contour
+    vector< Vec4i > hierarchy;
+    int largest_contour_index=0;
+    int largest_area=0;
+    
+    findContours(tmp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    
+    //get largest contour
+    for (int i = 0; i < contours.size(); i++) {
+        double a = contourArea(contours[i],false);
+        if (a > largest_area) {
+            largest_area = a;
+            largest_contour_index = i;
+        }
+    }
+    
+    //drawContours(res, contours, largest_contour_index, Scalar(255));
+    Mat a,alpha,final;
+    image->copyTo(a);
+    BorderMattingHandler handler(a, contours[largest_contour_index]);
+    handler.setAlpha(alpha);
+    Mat rgb[3];
+    split(a, rgb);
+    Mat _rgba[4]={rgb[0],rgb[1],rgb[2],alpha};
+    merge(_rgba, 4, rgba);
+}
+
 
 //Using rect initialize the pixel 
 void GCApplication::setRectInMask()

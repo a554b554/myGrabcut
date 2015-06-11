@@ -4,7 +4,8 @@
 #include <vector>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
-#include "gcgraph.hpp"
+#include <opencv2/highgui/highgui.hpp>
+#include "graph.h"
 using namespace cv;
 using namespace std;
 enum
@@ -23,23 +24,35 @@ public:
 	~GrabCut2D(void);
 };
 
-class GaussianMixtureModel{
+enum{
+    PRINT_WEIGHT,
+    PRINT_MEAN,
+    PRINT_COV,
+    PRINT_INVCOV,
+    PRINT_DET,
+    PRINT_ALL
+};
+
+class GMM{
 public:
-    const static int sizeofGMM = 5;
-    GaussianMixtureModel(Mat& _params);
-    double probability(const Vec3b BGR);
-    double probabilityInComponent(int component,const Vec3b BGR);
-    vector<vector<Vec3b>> samples;
-    void learning();
-    int maxComponent(const Vec3b BGR);
-    void addSample(Vec3b BGR);
+    static const int componentSize = 5;
+    GMM(Mat& _model);
+    double posibility(Vec3f color);
+    double posibility(Vec3f color,int cid);
+    void init();
+    void learn();
+    void addsample(Vec3f color, int which);
+    void addsample(Vec3f color);
+    int whichComponent(Vec3f color);
+    void printinfo(int printtype);
+    
 private:
-    // parameters for each gaussian model.
-    void calcDetandInv();
-    double mean[sizeofGMM][3]; //BGR 3-channel model
-    double weight[sizeofGMM]; //weight for each component.
-    double cov[sizeofGMM][3][3]; // cov matrix for each component.
-    int totalsize() const;
-    double covDeterminant[sizeofGMM];
-    Mat covInv[sizeofGMM];
+    double* weight;
+    double* mean; //sample mean
+    double* cov; //sample covariance
+    Vec3f meancolor[componentSize];
+    vector<Mat> covmat;
+    vector<Mat> invcovmat;
+    double covdet[componentSize];
+    vector<vector<Vec3f>> samples;
 };

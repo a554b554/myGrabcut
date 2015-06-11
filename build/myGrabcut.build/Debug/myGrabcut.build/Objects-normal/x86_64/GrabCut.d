@@ -50,4 +50,7 @@ dependencies: \
   /usr/local/include/opencv2/objdetect/objdetect.hpp \
   /usr/local/include/opencv2/legacy/compat.hpp \
   /usr/local/include/opencv2/core/internal.hpp \
-  /Users/changxiao/Documents/ZJU/ComputationalPhotography/myGrabcut/gcgraph.hpp
+  /usr/local/include/opencv2/highgui/highgui.hpp \
+  /usr/local/include/opencv2/highgui/highgui_c.h \
+  /Users/changxiao/Documents/ZJU/ComputationalPhotography/myGrabcut/maxflow-v3.01/graph.h \
+  /Users/changxiao/Documents/ZJU/ComputationalPhotography/myGrabcut/maxflow-v3.01/block.h

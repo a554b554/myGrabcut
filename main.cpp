@@ -26,13 +26,14 @@ GCApplication gcapp;
 
 static void on_mouse( int event, int x, int y, int flags, void* param )
 {
+    //cout<<event<<" "<<x<<" "<<y<<" "<<flags<<endl;
 	gcapp.mouseClick( event, x, y, flags, param );
 }
 
 
 int main()
 {
-	string filename = "llama.jpg";
+	string filename = "et007.jpg";
 	Mat image = imread( filename, 1 );
 
 	if( image.empty() )
@@ -63,6 +64,9 @@ int main()
 			gcapp.reset();
 			gcapp.showImage();
 			break;
+        case 's':
+            gcapp.saveImage("result.png");
+            break;
 		case 'n':
 			int iterCount = gcapp.getIterCount();
 			cout << "<" << iterCount << "... ";
@@ -75,7 +79,7 @@ int main()
 			else
 				cout << "rect must be determined>" << endl;
 			break;
-                
+
 		}
 	}
 

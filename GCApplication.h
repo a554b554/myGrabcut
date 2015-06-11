@@ -3,6 +3,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "GrabCut.h"
 #include <iostream>
+#include "BorderMattingHandler.h"
 using namespace std;
 using namespace cv;
 
@@ -40,6 +41,8 @@ public:
 	void mouseClick( int event, int x, int y, int flags, void* param );
 	int nextIter();
 	int getIterCount() const { return iterCount; }
+    void saveImage(const string name);
+    void borderMatting(const Mat& binMask, Mat& rgba);
 private:
 	void setRectInMask();
 	void setLblsInMask( int flags, Point p, bool isPr );

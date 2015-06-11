@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		26028E441B0EFB4E007E09EC /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26028E431B0EFB4E007E09EC /* graph.cpp */; };
+		26028E461B0EFB52007E09EC /* maxflow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26028E451B0EFB52007E09EC /* maxflow.cpp */; };
+		26028E481B0EFBFD007E09EC /* instances.inc in Sources */ = {isa = PBXBuildFile; fileRef = 26028E471B0EFBFD007E09EC /* instances.inc */; };
+		26B547161B1DA86B000FF63C /* BorderMattingHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B547141B1DA86B000FF63C /* BorderMattingHandler.cpp */; };
 		26F19BA81AEF2E190045B463 /* cv2.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 26F19B6F1AEF2E190045B463 /* cv2.so */; };
 		26F19BA91AEF2E190045B463 /* libopencv_calib3d.2.4.10.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 26F19B701AEF2E190045B463 /* libopencv_calib3d.2.4.10.dylib */; };
 		26F19BAA1AEF2E190045B463 /* libopencv_calib3d.2.4.10.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 26F19B711AEF2E190045B463 /* libopencv_calib3d.2.4.10.dylib */; };
@@ -82,6 +86,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		26028E411B0EFB40007E09EC /* graph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = graph.h; path = "maxflow-v3.01/graph.h"; sourceTree = SOURCE_ROOT; };
+		26028E421B0EFB47007E09EC /* block.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = block.h; path = "maxflow-v3.01/block.h"; sourceTree = SOURCE_ROOT; };
+		26028E431B0EFB4E007E09EC /* graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = graph.cpp; path = "maxflow-v3.01/graph.cpp"; sourceTree = SOURCE_ROOT; };
+		26028E451B0EFB52007E09EC /* maxflow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = maxflow.cpp; path = "maxflow-v3.01/maxflow.cpp"; sourceTree = SOURCE_ROOT; };
+		26028E471B0EFBFD007E09EC /* instances.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = instances.inc; path = "maxflow-v3.01/instances.inc"; sourceTree = SOURCE_ROOT; };
+		26B547141B1DA86B000FF63C /* BorderMattingHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BorderMattingHandler.cpp; sourceTree = SOURCE_ROOT; };
+		26B547151B1DA86B000FF63C /* BorderMattingHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderMattingHandler.h; sourceTree = SOURCE_ROOT; };
 		26F19B651AEF2DDD0045B463 /* myGrabcut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = myGrabcut; sourceTree = BUILT_PRODUCTS_DIR; };
 		26F19B6F1AEF2E190045B463 /* cv2.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = cv2.so; path = "../../../opencv-2.4.10/withopengl/lib/cv2.so"; sourceTree = "<group>"; };
 		26F19B701AEF2E190045B463 /* libopencv_calib3d.2.4.10.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.10.dylib; path = "../../../opencv-2.4.10/withopengl/lib/libopencv_calib3d.2.4.10.dylib"; sourceTree = "<group>"; };
@@ -144,7 +155,6 @@
 		26F19BE31AEF2EBB0045B463 /* GCApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCApplication.h; path = myGrabcut.xcodeproj/../GCApplication.h; sourceTree = SOURCE_ROOT; };
 		26F19BE51AEF2EBB0045B463 /* GrabCut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GrabCut.h; path = myGrabcut.xcodeproj/../GrabCut.h; sourceTree = SOURCE_ROOT; };
 		26F19BE61AEF2EBB0045B463 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = myGrabcut.xcodeproj/../main.cpp; sourceTree = SOURCE_ROOT; };
-		26F19BEA1AEFBFDF0045B463 /* gcgraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gcgraph.hpp; sourceTree = SOURCE_ROOT; };
 		26F19BEB1AF0A06D0045B463 /* GrabCut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GrabCut.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -238,10 +248,16 @@
 			children = (
 				26F19BE21AEF2EBB0045B463 /* GCApplication.cpp */,
 				26F19BE31AEF2EBB0045B463 /* GCApplication.h */,
-				26F19BEA1AEFBFDF0045B463 /* gcgraph.hpp */,
+				26028E421B0EFB47007E09EC /* block.h */,
 				26F19BEB1AF0A06D0045B463 /* GrabCut.cpp */,
 				26F19BE51AEF2EBB0045B463 /* GrabCut.h */,
+				26028E411B0EFB40007E09EC /* graph.h */,
+				26028E471B0EFBFD007E09EC /* instances.inc */,
+				26028E451B0EFB52007E09EC /* maxflow.cpp */,
+				26028E431B0EFB4E007E09EC /* graph.cpp */,
 				26F19BE61AEF2EBB0045B463 /* main.cpp */,
+				26B547141B1DA86B000FF63C /* BorderMattingHandler.cpp */,
+				26B547151B1DA86B000FF63C /* BorderMattingHandler.h */,
 			);
 			path = myGrabcut;
 			sourceTree = "<group>";
@@ -366,9 +382,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26028E441B0EFB4E007E09EC /* graph.cpp in Sources */,
 				26F19BEC1AF0A06D0045B463 /* GrabCut.cpp in Sources */,
 				26F19BE71AEF2EBB0045B463 /* GCApplication.cpp in Sources */,
+				26B547161B1DA86B000FF63C /* BorderMattingHandler.cpp in Sources */,
 				26F19BE91AEF2EBB0045B463 /* main.cpp in Sources */,
+				26028E461B0EFB52007E09EC /* maxflow.cpp in Sources */,
+				26028E481B0EFBFD007E09EC /* instances.inc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,6 +523,7 @@
 				26F19B6E1AEF2DDD0045B463 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
