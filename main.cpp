@@ -33,7 +33,7 @@ static void on_mouse( int event, int x, int y, int flags, void* param )
 
 int main()
 {
-	string filename = "et007.jpg";
+	string filename = "llama.jpg";
 	Mat image = imread( filename, 1 );
 
 	if( image.empty() )

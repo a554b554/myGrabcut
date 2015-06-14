@@ -21,6 +21,7 @@ static Scalar randomColor(){
     return Scalar(rand()*255,rand()*255,rand()*255);
 }
 
+
 // class function for Line.
 double Line::dist(Point2d p ,bool testsign){
     Point2d vec1(dst.x-src.x, dst.y-src.y);
@@ -43,7 +44,7 @@ double Line::dist(Point2d p ,bool testsign){
     }
 }
 
-bool Line::isInside(Point2d p){
+bool Line::isOutside(Point2d p){
     Point vec1(dst.x-src.x,dst.y-src.y);
     Point vec2(p.x-src.x,p.y-src.y);
     return vec1.x*vec2.y-vec2.x*vec1.y>=0;
@@ -93,6 +94,7 @@ BorderMattingHandler::BorderMattingHandler(const Mat& image, vector<Point>& cont
         waitKey(1);
     }*/
     constructTrimap();
+    
 }
 
 int BorderMattingHandler::minestDistanceContourIndex(Point p){
@@ -128,7 +130,11 @@ void BorderMattingHandler::constructTrimap(){
     cout<<"finished."<<endl;
     imshow("trimap", trimap);
     //watchpixelidx();
+    setupGauss();
+    initSolve();
+    solveEnergyFunction();
     computeAlpha();
+    rejectOutlier();
     imshow("alpha", alphamap);
 }
 
@@ -152,26 +158,162 @@ double BorderMattingHandler::dataTermForPixel(const Vec3f &pixel, const double a
     return Gauss::probability(miu, cov, pixel);
 }
 
+double BorderMattingHandler::dataTermForContour(const int contourid, const double sigma, const double delta){
+    double ans = 0;
+    for (int i = 0; i < pixelidx[contourid].size(); i++) {
+        Point p = pixelidx[contourid][i];
+        Vec3f color = _img.at<Vec3b>(p);
+        double r = contours[contourid].dist(p);
+        double alpha = Gauss::gauss(delta, sigma, r);
+        ans += dataTermForPixel(color, alpha, bgdGauss[contourid], fgdGauss[contourid]);
+    }
+    return ans;
+}
+
+double BorderMattingHandler::smoothDifference(const double delta1, const double sigma1, const double delta2, const double sigma2)const{
+    const double lamda1 = 50;
+    const double lamda2 = 1000;
+    double d1 = delta1 - delta2;
+    double d2 = sigma1 - sigma2;
+    return lamda1*d1*d1 + lamda2*d2*d2;
+}
+
 void BorderMattingHandler::computeAlpha(){
+    cout<<"computing alpha..."<<endl;
     trimap.copyTo(alphamap);
     for (int i = 0; i < pixelidx.size(); i++) {
         for (int j = 0; j < pixelidx[i].size(); j++) {
             const Point& p = pixelidx[i][j];
             double dist = contours[i].dist(p);
-            if (contours[i].isInside(p)) {
+            if (contours[i].isOutside(p)) {
                 alphamap.at<uchar>(p) = 0;
             }
             else{
-                alphamap.at<uchar>(p) = dist/6*255;
+                //alphamap.at<uchar>(p) = Gauss::gauss(delta[i], sigma[i],contours[i].dist(p));
+                alphamap.at<uchar>(p) = Gauss::gauss(5, 2,contours[i].dist(p))*255;
+                cout<<Gauss::gauss(5, 2,contours[i].dist(p))*255<<endl;
             }
         }
     }
 }
 
+void BorderMattingHandler::solveEnergyFunction(){
+    for (int t = 1; t < contours.size(); t++) {
+        bestValue(t, delta[t-1], sigma[t-1], delta[t], sigma[t]);
+    }
+}
+
+void BorderMattingHandler::initSolve(){
+    cout<<"solving energy function..."<<endl;
+    Gauss::discret(sigmapool, deltapool);
+    sigma.clear();
+    delta.clear();
+    sigma.resize(contours.size());
+    delta.resize(contours.size());
+    int bestsigmaid = 0;
+    int bestdeltaid = 0;
+    double mincost = INFINITY;
+    for (int i = 0; i < deltapool.size(); i++) {
+        for (int j = 0; j < sigmapool.size(); j++) {
+            if (sigmapool[j] > deltapool[i]) {
+                break;
+            }
+            double tmpcost = dataTermForContour(0, sigmapool[j], deltapool[i]);
+            if (tmpcost < mincost) {
+                mincost = tmpcost;
+                bestsigmaid = j;
+                bestdeltaid = i;
+            }
+        }
+    }
+    sigma[0] = sigmapool[bestsigmaid];
+    delta[0] = deltapool[bestdeltaid];
+}
+
+void BorderMattingHandler::setupGauss(){
+    const int L = 41;
+    bgdGauss.clear();
+    fgdGauss.clear();
+    cout<<"setting up gaussian model..."<<endl;
+    for (int i = 0; i < contours.size(); i++) {
+        Point p((contours[i].src.x+contours[i].dst.x)/2, (contours[i].src.y+contours[i].dst.y)/2);
+        int left = (p.x-L>=0)?p.x-L:0;
+        int right = (p.x+L<_img.cols)?p.x+L:_img.cols-1;
+        int low = (p.y-L>=0)?p.y-L:0;
+        int up = (p.y+L<_img.rows)?p.y+L:_img.rows-1;
+        Gauss _bgd,_fgd;
+        for (p.y = low; p.y <= up; p.y++) {
+            for (p.x = left; p.x <= right; p.x++){
+                if (trimap.at<uchar>(p) == BM_B) {
+                    _bgd.addsample(_img.at<Vec3b>(p));
+                }
+                else if (trimap.at<uchar>(p) == BM_F){
+                    _fgd.addsample(_img.at<Vec3b>(p));
+                }
+            }
+        }
+        _bgd.learn();
+        _fgd.learn();
+        bgdGauss.push_back(_bgd);
+        fgdGauss.push_back(_fgd);
+    }
+}
+
+void BorderMattingHandler::bestValue(const int contourid, const double delta0, const double sigma0, double &delta, double &sigma){
+    int bestdeltaid = 0;
+    int bestsigmaid = 0;
+    double mincost = INFINITY;
+    for (int i = 0; i < deltapool.size(); i++) {
+        for (int j = 0; j < sigmapool.size(); j++) {
+            if (sigmapool[j] > deltapool[i]) {
+                break;
+            }
+            double tmpcost = dataTermForContour(contourid, sigmapool[j], deltapool[i])+smoothDifference(delta0, sigma0, deltapool[i], sigmapool[j]);
+            if (tmpcost < mincost) {
+                mincost = tmpcost;
+                bestdeltaid = i;
+                bestsigmaid = j;
+            }
+        }
+    }
+    delta = deltapool[bestdeltaid];
+    sigma = sigmapool[bestsigmaid];
+}
+
+
 void BorderMattingHandler::setAlpha(cv::Mat &alpha)
 {
     alphamap.copyTo(alpha);
 }
+
+void BorderMattingHandler::rejectOutlier(){
+    vector< vector <Point> > contours; // Vector for storing contour
+    vector< Vec4i > hierarchy;
+    int largest_contour_index=0;
+    int largest_area=0;
+    Mat _alpha = alphamap.clone();
+    findContours(_alpha, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    
+    //get largest contour
+    for (int i = 0; i < contours.size(); i++) {
+        double a = contourArea(contours[i],false);
+        if (a > largest_area) {
+            largest_area = a;
+            largest_contour_index = i;
+        }
+    }
+    Point p;
+    for (p.y = 0; p.y<alphamap.rows; p.y++) {
+        for (p.x = 0; p.x<alphamap.cols; p.x++) {
+            if (pointPolygonTest(contours[largest_contour_index], p, false)<0){
+                alphamap.at<uchar>(p) = 0;
+            }
+        }
+    }
+}
+                                
+
+                                   
 
 //class function for Gauss
 Gauss::Gauss(){
@@ -184,9 +326,9 @@ double Gauss::gauss(const double center, const double width, const double r){
     if (r>center) {
         return 1;
     }
-    else if (r<=0){
+   /* else if (r<=0){
         return 0;
-    }
+    }*/
     else{
         double t = (-0.5)*(r-center)*(r-center)/(width*width);
         return 1.0f/width*exp(t);
@@ -230,7 +372,16 @@ double Gauss::probability(const Vec3f &mean, const cv::Mat &covmat, Vec3f color)
     return 1.0f/sqrt(determinant(covmat))*exp(mul);
 }
 
-
+void Gauss::discret(vector<double> &sigma, vector<double> &delta){
+    sigma.clear();
+    delta.clear();
+    for (double i = 0.1; i <= 6; i += (6.0/30)) {
+        delta.push_back(i);
+    }
+    for (double i = 0.1; i <= 2; i += (2.0/10)) {
+        sigma.push_back(i);
+    }
+}
 
 
 

@@ -234,11 +234,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BorderMattingHandler.cpp"
-            timestampString = "455000702.83623"
+            timestampString = "455979458.352862"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
             landmarkName = "BorderMattingHandler::BorderMattingHandler(const Mat&amp; image, vector&lt;Point&gt;&amp; contour)"
             landmarkType = "5">
             <Locations>
@@ -297,11 +297,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BorderMattingHandler.cpp"
-            timestampString = "455000702.83623"
+            timestampString = "455979458.352862"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
             landmarkName = "BorderMattingHandler::constructTrimap()"
             landmarkType = "5">
          </BreakpointContent>
@@ -313,12 +313,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BorderMattingHandler.cpp"
-            timestampString = "455000702.83623"
+            timestampString = "455979920.985168"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "221"
-            endingLineNumber = "221"
+            startingLineNumber = "363"
+            endingLineNumber = "363"
             landmarkName = "Gauss::probability(const Vec3f &amp;mean, const cv::Mat &amp;covmat, Vec3f color)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BorderMattingHandler.cpp"
+            timestampString = "455979920.985168"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
+            landmarkName = "BorderMattingHandler::computeAlpha()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
